@@ -131,7 +131,7 @@ class EmployeeTable extends React.Component {
         this.setState({ areaCodes: obj });
       })
       .then(() => {
-        this.loadEmployees()
+        this.loadEmployees();
       });
   }
 
@@ -161,7 +161,7 @@ class EmployeeTable extends React.Component {
 
   componentDidMount() {
     this.loadData();
-    this.eventEmitter = Emitter.addListener('search', this.filterEmployee)
+    this.eventEmitter = Emitter.addListener('search', this.filterEmployee);
   }
 
   filterEmployee(query) {
@@ -170,43 +170,43 @@ class EmployeeTable extends React.Component {
       filtered = filtered.filter(e => {
         if (!e.name) return false;
         return e.name.includes(query.name);
-      })
+      });
     }
     if (query.sex !== '') {
       filtered = filtered.filter(e => {
         if (!e.sex) return false;
         return e.sex.includes(query.sex);
-      })
+      });
     }
     if (query.phone.length > 0) {
       filtered = filtered.filter(e => {
         if (!e.phone) return false;
         return e.phone.includes(query.phone);
-      })
+      });
     }
     if (query.idno.length > 0) {
       filtered = filtered.filter(e => {
         if (!e.idnumber) return false;
         return e.idnumber.includes(query.idno);
-      })
+      });
     }
     if (query.department.length > 0) {
       filtered = filtered.filter(e => {
         if (!e.department) return false;
         return e.department.includes(query.department);
-      })
+      });
     }
     if (query.age.length === 2 && query.age[0] <= query.age[1] && query.age[1] - query.age[0] < 120) {
       filtered = filtered.filter(e => {
         if (!e.age) return false;
         return (e.age >= query.age[0] && e.age <= query.age[1]);
-      })
+      });
     }
     if (query.area.length > 0) {
       filtered = filtered.filter(e => {
         if (!e.area) return false;
         return e.area.includes(query.area);
-      })
+      });
     }
 
     this.setState({ employees: filtered, page: 0 });

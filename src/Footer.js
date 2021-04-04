@@ -20,11 +20,11 @@ const useStyles = makeStyles({
 
 class Footer extends React.Component {
   constructor() {
-    super()
+    super();
 
     this.state = {
       updateTime: -1
-    }
+    };
   }
 
   componentDidMount() {
