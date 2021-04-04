@@ -1,0 +1,4 @@
+AuthName "Enter Password"
+AuthType basic
+AuthUserFile /var/www/html/members.txt
+require valid-user
