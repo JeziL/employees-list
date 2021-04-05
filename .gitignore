@@ -26,4 +26,3 @@ yarn-error.log*
 .env
 dist.bat
 src/config.json
-public/data/employees.json

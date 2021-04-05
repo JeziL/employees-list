@@ -1,7 +1,16 @@
-const fs = require("fs");
 const axios = require("axios");
+const crypto = require("crypto");
+const fs = require("fs");
 
-const parseEmployees = (resp) => {
+const encrypt = (msg, key) => {
+  const keyBuf = Buffer.from(key, "latin1");
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv("aes-256-gcm", keyBuf, iv);
+  const ciphered = cipher.update(msg, "utf-8", "base64");
+  return `${iv.toString("base64")}:${ciphered}`;
+};
+
+const parseAndSaveEmployees = (resp) => {
   const PHONE_REG = /^\d+$/;
   const ID_REG = /^\d{17}[xX\d]$/;
 
@@ -47,11 +56,13 @@ const parseEmployees = (resp) => {
     });
   });
 
-  fs.writeFileSync("employees.json", JSON.stringify({
+  const jsonStr = JSON.stringify({
     data: members,
     updateTime: Math.floor(Date.now() / 1000)
-  }));
-}
+  });
+
+  fs.writeFileSync("employees.json.enc", encrypt(jsonStr, resp.key));
+};
 
 const config = JSON.parse(fs.readFileSync("../../src/config.json"));
 
@@ -61,7 +72,13 @@ axios({
   headers: config.updateData.headers,
   data: JSON.stringify(config.updateData.body)
 })
-  .then(parseEmployees)
-  .catch((error) => {
+  .then(resp => {
+    return {
+      data: resp.data,
+      key: config.updateData.encryptKey
+    };
+  })
+  .then(parseAndSaveEmployees)
+  .catch(error => {
     console.log(error);
   });

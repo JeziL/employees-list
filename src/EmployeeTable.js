@@ -15,8 +15,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
+import config from './config.json';
 import Emitter from './event';
-import { calcAgeFromIDNumber, getAddressFromIDNumber } from "./utils";
+import { calcAgeFromIDNumber, getAddressFromIDNumber, decryptData } from "./utils";
 
 const useStyles = makeStyles({
   table: {
@@ -129,18 +130,15 @@ class EmployeeTable extends React.Component {
   }
 
   async loadEmployees() {
-    fetch('data/employees.json'
-      , {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      }
-    )
-      .then((response) => {
-        return response.json();
+    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/public/data/employees.json.enc')
+      .then(response => {
+        return response.text();
       })
-      .then((obj) => {
+      .then(ct => {
+        const deciphered = decryptData(ct, config.updateData.encryptKey);
+        return JSON.parse(deciphered);
+      })
+      .then(obj => {
         const members = obj.data.map(m => {
           let o = Object.assign({}, m);
           o.age = calcAgeFromIDNumber(o.idnumber);

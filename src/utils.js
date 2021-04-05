@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 export const calcAgeFromIDNumber = (idnumber) => {
   if (!idnumber) return null;
   const birthString = idnumber.substring(6, 14);
@@ -28,3 +30,12 @@ export const getAddressFromIDNumber = (idnumber, areaCodes) => {
     return null;
   }
 }
+
+export const decryptData = (ct, key) => {
+  const keyBuf = Buffer.from(key, "latin1");
+  const comp = ct.split(":");
+  const iv = Buffer.from(comp.shift(), "base64");
+  const decipher = crypto.createDecipheriv("aes-256-gcm", keyBuf, iv);
+  const deciphered = decipher.update(comp.join(":"), "base64", "utf-8");
+  return deciphered;
+};
