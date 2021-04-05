@@ -117,7 +117,7 @@ class EmployeeTable extends React.Component {
   }
 
   loadData() {
-    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/public/data/areaCodes.json')
+    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/areaCodes.json')
       .then((response) => {
         return response.json();
       })
@@ -130,7 +130,7 @@ class EmployeeTable extends React.Component {
   }
 
   async loadEmployees() {
-    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/public/data/employees.json.enc')
+    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/employees.json.enc')
       .then(response => {
         return response.text();
       })

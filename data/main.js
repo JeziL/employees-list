@@ -64,7 +64,7 @@ const parseAndSaveEmployees = (resp) => {
   fs.writeFileSync("employees.json.enc", encrypt(jsonStr, resp.key));
 };
 
-const config = JSON.parse(fs.readFileSync("../../src/config.json"));
+const config = JSON.parse(fs.readFileSync("../src/config.json"));
 
 axios({
   method: "post",
