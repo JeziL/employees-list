@@ -116,14 +116,7 @@ class EmployeeTable extends React.Component {
   }
 
   loadData() {
-    fetch('data/areaCodes.json'
-      , {
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      }
-    )
+    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/public/data/areaCodes.json')
       .then((response) => {
         return response.json();
       })
