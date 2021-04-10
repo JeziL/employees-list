@@ -42,6 +42,7 @@ class Filters extends React.Component {
 
     this.clearFilters = this.clearFilters.bind(this);
     this.search = this.search.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   clearFilters() {
@@ -60,6 +61,12 @@ class Filters extends React.Component {
     Emitter.emit('search', this.state);
   }
 
+  handleKeyPress(e) {
+    if (e.key === 'Enter') {
+      this.search();
+    }
+  }
+
   render() {
     const classes = this.props.classes;
 
@@ -70,6 +77,7 @@ class Filters extends React.Component {
           <TextField id="filter-name" label="姓名"
             value={this.state.name}
             onChange={(e) => { this.setState({ name: e.target.value }) }}
+            onKeyPress={this.handleKeyPress}
           />
         </FormControl>
 
@@ -91,6 +99,7 @@ class Filters extends React.Component {
           <TextField id="filter-phone" label="手机号"
             value={this.state.phone}
             onChange={(e) => { this.setState({ phone: e.target.value }) }}
+            onKeyPress={this.handleKeyPress}
           />
         </FormControl>
 
@@ -98,6 +107,7 @@ class Filters extends React.Component {
           <TextField id="filter-id" label="身份证号"
             value={this.state.idno}
             onChange={(e) => { this.setState({ idno: e.target.value }) }}
+            onKeyPress={this.handleKeyPress}
           />
         </FormControl>
 
@@ -105,6 +115,7 @@ class Filters extends React.Component {
           <TextField id="filter-department" label="部门"
             value={this.state.department}
             onChange={(e) => { this.setState({ department: e.target.value }) }}
+            onKeyPress={this.handleKeyPress}
           />
         </FormControl>
 
@@ -125,6 +136,7 @@ class Filters extends React.Component {
           <TextField id="filter-area" label="籍贯"
             value={this.state.area}
             onChange={(e) => { this.setState({ area: e.target.value }) }}
+            onKeyPress={this.handleKeyPress}
           />
         </FormControl>
 
