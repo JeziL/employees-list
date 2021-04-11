@@ -135,7 +135,11 @@ class EmployeeTable extends React.Component {
         return response.text();
       })
       .then(ct => {
-        const deciphered = decryptData(ct, config.updateData.encryptKey);
+        let deciphered = decryptData(ct, config.updateData.encryptKey);
+        // TODO: Why?
+        if (deciphered.slice(-1) !== '}') {
+          deciphered += '}';
+        }
         return JSON.parse(deciphered);
       })
       .then(obj => {
