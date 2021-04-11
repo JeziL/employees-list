@@ -71,7 +71,7 @@ export const generateVCards = (employees) => {
 
 export const downloadFile = (filename, content) => {
   const element = document.createElement('a');
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+  element.setAttribute('href', 'data:text/vcard;charset=utf-8,' + encodeURIComponent(content));
   element.setAttribute('download', filename);
   element.click();
 };
