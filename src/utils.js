@@ -34,8 +34,11 @@ export const getAddressFromIDNumber = (idnumber, areaCodes) => {
 export const decryptData = (ct, key) => {
   const keyBuf = Buffer.from(key, "latin1");
   const comp = ct.split(":");
-  const iv = Buffer.from(comp.shift(), "base64");
+  const iv = Buffer.from(comp[0], "base64");
   const decipher = crypto.createDecipheriv("aes-256-gcm", keyBuf, iv);
-  const deciphered = decipher.update(comp.join(":"), "base64", "utf-8");
+  const authTag = Buffer.from(comp[1], "base64");
+  decipher.setAuthTag(authTag);
+  let deciphered = decipher.update(comp[2], "base64", "utf-8");
+  deciphered += decipher.final("utf-8");
   return deciphered;
 };

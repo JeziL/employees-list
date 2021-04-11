@@ -130,16 +130,12 @@ class EmployeeTable extends React.Component {
   }
 
   async loadEmployees() {
-    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/employees.json.enc')
+    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/data.json.enc')
       .then(response => {
         return response.text();
       })
       .then(ct => {
         let deciphered = decryptData(ct, config.updateData.encryptKey);
-        // TODO: Why?
-        if (deciphered.slice(-1) !== '}') {
-          deciphered += '}';
-        }
         return JSON.parse(deciphered);
       })
       .then(obj => {

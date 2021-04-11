@@ -6,8 +6,10 @@ const encrypt = (msg, key) => {
   const keyBuf = Buffer.from(key, "latin1");
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv("aes-256-gcm", keyBuf, iv);
-  const ciphered = cipher.update(msg, "utf-8", "base64");
-  return `${iv.toString("base64")}:${ciphered}`;
+  let ciphered = cipher.update(msg, "utf-8", "base64");
+  ciphered += cipher.final("base64");
+  const authTag = cipher.getAuthTag().toString("base64");
+  return `${iv.toString("base64")}:${authTag}:${ciphered}`;
 };
 
 const parseAndSaveEmployees = (resp) => {
@@ -61,7 +63,7 @@ const parseAndSaveEmployees = (resp) => {
     updateTime: Math.floor(Date.now() / 1000)
   });
 
-  fs.writeFileSync("employees.json.enc", encrypt(jsonStr, resp.key));
+  fs.writeFileSync("data.json.enc", encrypt(jsonStr, resp.key));
 };
 
 const config = JSON.parse(fs.readFileSync("../src/config.json"));
