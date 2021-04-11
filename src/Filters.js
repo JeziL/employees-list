@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button';
 import Clear from '@material-ui/icons/Clear';
+import CloudDownload from '@material-ui/icons/CloudDownload';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -43,6 +44,7 @@ class Filters extends React.Component {
     this.clearFilters = this.clearFilters.bind(this);
     this.search = this.search.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.save = this.save.bind(this);
   }
 
   clearFilters() {
@@ -65,6 +67,10 @@ class Filters extends React.Component {
     if (e.key === 'Enter') {
       this.search();
     }
+  }
+
+  save() {
+    Emitter.emit('save');
   }
 
   render() {
@@ -141,11 +147,15 @@ class Filters extends React.Component {
         </FormControl>
 
         <Button variant="outlined" className={classes.filterBtn} onClick={this.clearFilters}>
-          <Clear />清空
+          <Clear />&ensp;清空
         </Button>
 
         <Button variant="contained" color="primary" className={classes.filterBtn} onClick={this.search}>
-          <Search />搜索
+          <Search />&ensp;搜索
+        </Button>
+
+        <Button variant="outlined" color="primary" className={classes.filterBtn} onClick={this.save}>
+          <CloudDownload />&ensp;保存
         </Button>
 
       </div>

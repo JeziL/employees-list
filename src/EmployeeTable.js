@@ -105,6 +105,7 @@ class EmployeeTable extends React.Component {
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.filterEmployee = this.filterEmployee.bind(this);
+    this.saveToVCF = this.saveToVCF.bind(this);
   }
 
   handleChangePage(_event, newPage) {
@@ -153,6 +154,7 @@ class EmployeeTable extends React.Component {
   componentDidMount() {
     this.loadData();
     this.eventEmitter = Emitter.addListener('search', this.filterEmployee);
+    this.eventEmitter.addListener('save', this.saveToVCF);
   }
 
   filterEmployee(query) {
@@ -201,6 +203,10 @@ class EmployeeTable extends React.Component {
     }
 
     this.setState({ employees: filtered, page: 0 });
+  }
+
+  saveToVCF() {
+    alert('todo');
   }
 
   componentWillUnmount() {
