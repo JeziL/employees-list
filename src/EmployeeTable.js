@@ -92,7 +92,7 @@ class EmployeeTable extends React.Component {
   componentDidMount() {
     this.loadData();
     this.eventEmitter = Emitter.addListener('search', this.filterEmployee);
-    this.eventEmitter.addListener('save', () => { this.setState({saveDialogVisible: true}); });
+    this.eventEmitter.addListener('save', () => { this.setState({ saveDialogVisible: true }); });
   }
 
   filterEmployee(query) {
@@ -144,7 +144,7 @@ class EmployeeTable extends React.Component {
   }
 
   handleDialogClose() {
-    this.setState({saveDialogVisible: false});
+    this.setState({ saveDialogVisible: false });
   }
 
   saveToVCF() {
@@ -221,15 +221,15 @@ class EmployeeTable extends React.Component {
           <DialogContent>
             <DialogContentText>
               将下载一个包含 {this.state.employees.length} 个联系人的 VCF 文件，可导入至通讯录软件。
-          </DialogContentText>
+            </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.handleDialogClose}>
               取消
-          </Button>
+            </Button>
             <Button onClick={this.saveToVCF} color="primary" autoFocus>
               确定
-          </Button>
+            </Button>
           </DialogActions>
         </Dialog>
       </TableContainer>
