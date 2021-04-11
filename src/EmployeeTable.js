@@ -1,3 +1,9 @@
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Paper from '@material-ui/core/Paper';
 import React from 'react';
 import Table from '@material-ui/core/Table';
@@ -29,13 +35,15 @@ class EmployeeTable extends React.Component {
       allEmployees: [],
       areaCodes: {},
       page: 0,
-      rowsPerPage: 10
+      rowsPerPage: 10,
+      saveDialogVisible: false
     };
 
     this.handleChangePage = this.handleChangePage.bind(this);
     this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
     this.filterEmployee = this.filterEmployee.bind(this);
     this.saveToVCF = this.saveToVCF.bind(this);
+    this.handleDialogClose = this.handleDialogClose.bind(this);
   }
 
   handleChangePage(_event, newPage) {
@@ -84,7 +92,7 @@ class EmployeeTable extends React.Component {
   componentDidMount() {
     this.loadData();
     this.eventEmitter = Emitter.addListener('search', this.filterEmployee);
-    this.eventEmitter.addListener('save', this.saveToVCF);
+    this.eventEmitter.addListener('save', () => { this.setState({saveDialogVisible: true}); });
   }
 
   filterEmployee(query) {
@@ -135,8 +143,13 @@ class EmployeeTable extends React.Component {
     this.setState({ employees: filtered, page: 0 });
   }
 
+  handleDialogClose() {
+    this.setState({saveDialogVisible: false});
+  }
+
   saveToVCF() {
-    alert('todo');
+    this.handleDialogClose();
+    // TODO
   }
 
   componentWillUnmount() {
@@ -200,7 +213,27 @@ class EmployeeTable extends React.Component {
             </TableRow>
           </TableFooter>
         </Table>
+        <Dialog
+          open={this.state.saveDialogVisible}
+          onClose={this.handleDialogClose}
+        >
+          <DialogTitle>{"保存为 VCF 文件？"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              将下载一个包含 {this.state.employees.length} 个联系人的 VCF 文件，可导入至通讯录软件。
+          </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleDialogClose}>
+              取消
+          </Button>
+            <Button onClick={this.saveToVCF} color="primary" autoFocus>
+              确定
+          </Button>
+          </DialogActions>
+        </Dialog>
       </TableContainer>
+
     );
   }
 }
