@@ -1,17 +1,23 @@
 const crypto = require("crypto");
+const vCardsJS = require('vcards-js');
 
-export const calcAgeFromIDNumber = (idnumber) => {
+const getBirthdayFromIDNumber = (idnumber) => {
   if (!idnumber) return null;
   const birthString = idnumber.substring(6, 14);
-  const birthday = new Date(
+  return new Date(
     birthString.substring(0, 4),
     birthString.substring(4, 6) - 1,
     birthString.substring(6, 8)
   );
+};
+
+export const calcAgeFromIDNumber = (idnumber) => {
+  if (!idnumber) return null;
+  const birthday = getBirthdayFromIDNumber(idnumber);
   const ageDifMs = Date.now() - birthday.getTime();
   const ageDate = new Date(ageDifMs);
   return Math.abs(ageDate.getUTCFullYear() - 1970);
-}
+};
 
 export const getAddressFromIDNumber = (idnumber, areaCodes) => {
   if (!idnumber) return null;
@@ -29,7 +35,7 @@ export const getAddressFromIDNumber = (idnumber, areaCodes) => {
   } else {
     return null;
   }
-}
+};
 
 export const decryptData = (ct, key) => {
   const keyBuf = Buffer.from(key, "latin1");
@@ -41,4 +47,31 @@ export const decryptData = (ct, key) => {
   let deciphered = decipher.update(comp[2], "base64", "utf-8");
   deciphered += decipher.final("utf-8");
   return deciphered;
+};
+
+export const generateVCards = (employees) => {
+  let vCardsStr = "";
+  employees.forEach(employee => {
+    let vCard = vCardsJS();
+    vCard.firstName = employee.name.slice(1);
+    vCard.lastName = employee.name.slice(0, 1);
+    vCard.organization = employee.department;
+    vCard.workPhone = employee.phone;
+    const birthday = getBirthdayFromIDNumber(employee.idnumber);
+    if (birthday) {
+      vCard.birthday = birthday;
+    }
+    if (employee.area) {
+      vCard.note = employee.area;
+    }
+    vCardsStr += vCard.getFormattedString();
+  });
+  return vCardsStr;
+};
+
+export const downloadFile = (filename, content) => {
+  const element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+  element.setAttribute('download', filename);
+  element.click();
 };

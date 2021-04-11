@@ -18,7 +18,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import config from './config.json';
 import Emitter from './event';
 import TablePaginationActions from './TablePaginationActions';
-import { calcAgeFromIDNumber, getAddressFromIDNumber, decryptData } from "./utils";
+import { calcAgeFromIDNumber, getAddressFromIDNumber, decryptData, generateVCards, downloadFile } from "./utils";
 
 const useStyles = makeStyles({
   table: {
@@ -149,7 +149,8 @@ class EmployeeTable extends React.Component {
 
   saveToVCF() {
     this.handleDialogClose();
-    // TODO
+    const vCardsStr = generateVCards(this.state.employees);
+    downloadFile('employees.vcf', vCardsStr);
   }
 
   componentWillUnmount() {
@@ -217,10 +218,10 @@ class EmployeeTable extends React.Component {
           open={this.state.saveDialogVisible}
           onClose={this.handleDialogClose}
         >
-          <DialogTitle>{"保存为 VCF 文件？"}</DialogTitle>
+          <DialogTitle>{"保存为 vCard 文件？"}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              将下载一个包含 {this.state.employees.length} 个联系人的 VCF 文件，可导入至通讯录软件。
+              将下载一个包含 {this.state.employees.length} 个联系人的 vCard 文件，可导入至通讯录软件。
             </DialogContentText>
           </DialogContent>
           <DialogActions>
