@@ -47,12 +47,6 @@ class EmployeeTable extends React.Component {
       rowsPerPage: 10,
       saveDialogVisible: false,
     };
-
-    this.handleChangePage = this.handleChangePage.bind(this);
-    this.handleChangeRowsPerPage = this.handleChangeRowsPerPage.bind(this);
-    this.filterEmployee = this.filterEmployee.bind(this);
-    this.saveToVCF = this.saveToVCF.bind(this);
-    this.handleDialogClose = this.handleDialogClose.bind(this);
   }
 
   componentDidMount() {
@@ -65,38 +59,27 @@ class EmployeeTable extends React.Component {
     Emitter.removeListener(this.eventEmitter);
   }
 
-  handleDialogClose() {
+  handleDialogClose = () => {
     this.setState({ saveDialogVisible: false });
   }
 
-  handleChangeRowsPerPage(event) {
+  handleChangeRowsPerPage = (event) => {
     this.setState({ rowsPerPage: parseInt(event.target.value, 10) });
     this.setState({ page: 0 });
   }
 
-  handleChangePage(_event, newPage) {
+  handleChangePage = (_event, newPage) => {
     this.setState({ page: newPage });
   }
 
-  saveToVCF() {
+  saveToVCF = () => {
     this.handleDialogClose();
     const { employees } = this.state;
     const vCardsStr = generateVCards(employees);
     downloadFile('employees.vcf', vCardsStr);
   }
 
-  loadData() {
-    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/areaCodes.json')
-      .then((response) => response.json())
-      .then((obj) => {
-        this.setState({ areaCodes: obj });
-      })
-      .then(() => {
-        this.loadEmployees();
-      });
-  }
-
-  filterEmployee(query) {
+  filterEmployee = (query) => {
     let { allEmployees: filtered } = this.state;
     if (query.name.length > 0) {
       filtered = filtered.filter((e) => {
@@ -144,6 +127,17 @@ class EmployeeTable extends React.Component {
     }
 
     this.setState({ employees: filtered, page: 0 });
+  }
+
+  loadData() {
+    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/areaCodes.json')
+      .then((response) => response.json())
+      .then((obj) => {
+        this.setState({ areaCodes: obj });
+      })
+      .then(() => {
+        this.loadEmployees();
+      });
   }
 
   async loadEmployees() {

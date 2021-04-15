@@ -47,24 +47,19 @@ class Filters extends React.Component {
       age: [0, 120],
       area: '',
     };
-
-    this.clearFilters = this.clearFilters.bind(this);
-    this.search = this.search.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.save = this.save.bind(this);
   }
 
-  handleKeyPress(e) {
+  handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       this.search();
     }
   }
 
-  search() {
+  search = () => {
     Emitter.emit('search', this.state);
   }
 
-  clearFilters() {
+  clearFilters = () => {
     this.setState({
       name: '',
       sex: '',
