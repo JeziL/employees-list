@@ -31,10 +31,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 class Filters extends React.Component {
-  static save() {
-    Emitter.emit('save');
-  }
-
   constructor() {
     super();
 
@@ -168,7 +164,7 @@ class Filters extends React.Component {
           &ensp;搜索
         </Button>
 
-        <Button variant="outlined" color="primary" className={classes.filterBtn} onClick={this.save}>
+        <Button variant="outlined" color="primary" className={classes.filterBtn} onClick={() => { Emitter.emit('save'); }}>
           <CloudDownload />
           &ensp;保存
         </Button>
