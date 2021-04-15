@@ -1,7 +1,8 @@
 import Container from '@material-ui/core/Container';
+import React from 'react';
 import EmployeeTable from './EmployeeTable';
 import Filters from './Filters';
-import Footer from "./Footer";
+import Footer from './Footer';
 
 function App() {
   return (

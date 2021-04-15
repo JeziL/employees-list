@@ -1,3 +1,6 @@
+/* eslint-disable react/forbid-prop-types */
+
+import PropTypes from 'prop-types';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Emitter from './event';
@@ -7,15 +10,15 @@ const useStyles = makeStyles({
   footerDiv: {
     textAlign: 'center',
     color: '#586069',
-    fontSize: 12
+    fontSize: 12,
   },
   updateDiv: {
-    marginBottom: 5
+    marginBottom: 5,
   },
   footerLink: {
     color: '#586069',
-    textDecoration: 'none'
-  }
+    textDecoration: 'none',
+  },
 });
 
 class Footer extends React.Component {
@@ -23,7 +26,7 @@ class Footer extends React.Component {
     super();
 
     this.state = {
-      updateTime: -1
+      updateTime: -1,
     };
   }
 
@@ -38,7 +41,8 @@ class Footer extends React.Component {
   }
 
   render() {
-    const classes = this.props.classes;
+    const { classes } = this.props;
+    const { updateTime } = this.state;
 
     const releaseYear = 2021;
     const currentYear = new Date().getFullYear();
@@ -48,24 +52,34 @@ class Footer extends React.Component {
     }
 
     let updateTimeString = '';
-    if (this.state.updateTime >= 0) {
-      const updateTime = new Date(this.state.updateTime * 1000);
-      updateTimeString += `数据更新于：${updateTime.toLocaleString('zh-CN')}`;
+    if (updateTime >= 0) {
+      const updateTimeMs = new Date(updateTime * 1000);
+      updateTimeString += `数据更新于：${updateTimeMs.toLocaleString('zh-CN')}`;
     }
 
     return (
       <div className={classes.footerDiv}>
         <div className={classes.updateDiv}>{updateTimeString}</div>
-        Copyright © {durationString} {config.footerInfo.copyright}&nbsp;|&nbsp;
-        <a href='http://www.beian.miit.gov.cn/'
-          target='_blank;'
-          className={classes.footerLink}>
+        Copyright ©&nbsp;
+        {durationString}
+        &nbsp;
+        {config.footerInfo.copyright}
+        &nbsp;|&nbsp;
+        <a
+          href="http://www.beian.miit.gov.cn/"
+          target="_blank;"
+          className={classes.footerLink}
+        >
           {config.footerInfo.icp}
         </a>
       </div>
     );
   }
 }
+
+Footer.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 
 const FooterHook = () => {
   const classes = useStyles();

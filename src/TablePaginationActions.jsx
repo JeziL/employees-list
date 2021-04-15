@@ -4,6 +4,7 @@ import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,7 +17,12 @@ const useStyles = makeStyles((theme) => ({
 const TablePaginationActions = (props) => {
   const classes = useStyles();
   const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
+  const {
+    count,
+    page,
+    rowsPerPage,
+    onChangePage,
+  } = props;
 
   const handleFirstPageButtonClick = (event) => {
     onChangePage(event, 0);

@@ -1,3 +1,5 @@
+/* eslint-disable react/forbid-prop-types */
+
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -5,6 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Paper from '@material-ui/core/Paper';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -18,7 +21,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import config from './config.json';
 import Emitter from './event';
 import TablePaginationActions from './TablePaginationActions';
-import { calcAgeFromIDNumber, getAddressFromIDNumber, decryptData, generateVCards, downloadFile } from "./utils";
+import {
+  calcAgeFromIDNumber,
+  getAddressFromIDNumber,
+  decryptData,
+  generateVCards,
+  downloadFile,
+} from './utils';
 
 const useStyles = makeStyles({
   table: {
@@ -36,7 +45,7 @@ class EmployeeTable extends React.Component {
       areaCodes: {},
       page: 0,
       rowsPerPage: 10,
-      saveDialogVisible: false
+      saveDialogVisible: false,
     };
 
     this.handleChangePage = this.handleChangePage.bind(this);
@@ -46,8 +55,18 @@ class EmployeeTable extends React.Component {
     this.handleDialogClose = this.handleDialogClose.bind(this);
   }
 
-  handleChangePage(_event, newPage) {
-    this.setState({ page: newPage });
+  componentDidMount() {
+    this.loadData();
+    this.eventEmitter = Emitter.addListener('search', this.filterEmployee);
+    this.eventEmitter.addListener('save', () => { this.setState({ saveDialogVisible: true }); });
+  }
+
+  componentWillUnmount() {
+    Emitter.removeListener(this.eventEmitter);
+  }
+
+  handleDialogClose() {
+    this.setState({ saveDialogVisible: false });
   }
 
   handleChangeRowsPerPage(event) {
@@ -55,11 +74,20 @@ class EmployeeTable extends React.Component {
     this.setState({ page: 0 });
   }
 
+  handleChangePage(_event, newPage) {
+    this.setState({ page: newPage });
+  }
+
+  saveToVCF() {
+    this.handleDialogClose();
+    const { employees } = this.state;
+    const vCardsStr = generateVCards(employees);
+    downloadFile('employees.vcf', vCardsStr);
+  }
+
   loadData() {
     fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/areaCodes.json')
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((obj) => {
         this.setState({ areaCodes: obj });
       })
@@ -68,73 +96,48 @@ class EmployeeTable extends React.Component {
       });
   }
 
-  async loadEmployees() {
-    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/data.json.enc')
-      .then(response => {
-        return response.text();
-      })
-      .then(ct => {
-        let deciphered = decryptData(ct, config.updateData.encryptKey);
-        return JSON.parse(deciphered);
-      })
-      .then(obj => {
-        const members = obj.data.map(m => {
-          let o = Object.assign({}, m);
-          o.age = calcAgeFromIDNumber(o.idnumber);
-          o.area = getAddressFromIDNumber(o.idnumber, this.state.areaCodes);
-          return o;
-        });
-        this.setState({ allEmployees: members, employees: members });
-        Emitter.emit('updateTime', obj.updateTime);
-      });
-  }
-
-  componentDidMount() {
-    this.loadData();
-    this.eventEmitter = Emitter.addListener('search', this.filterEmployee);
-    this.eventEmitter.addListener('save', () => { this.setState({ saveDialogVisible: true }); });
-  }
-
   filterEmployee(query) {
-    let filtered = this.state.allEmployees;
+    let { allEmployees: filtered } = this.state;
     if (query.name.length > 0) {
-      filtered = filtered.filter(e => {
+      filtered = filtered.filter((e) => {
         if (!e.name) return false;
         return e.name.includes(query.name);
       });
     }
     if (query.sex !== '') {
-      filtered = filtered.filter(e => {
+      filtered = filtered.filter((e) => {
         if (!e.sex) return false;
         return e.sex.includes(query.sex);
       });
     }
     if (query.phone.length > 0) {
-      filtered = filtered.filter(e => {
+      filtered = filtered.filter((e) => {
         if (!e.phone) return false;
         return e.phone.includes(query.phone);
       });
     }
     if (query.idno.length > 0) {
-      filtered = filtered.filter(e => {
+      filtered = filtered.filter((e) => {
         if (!e.idnumber) return false;
         return e.idnumber.includes(query.idno);
       });
     }
     if (query.department.length > 0) {
-      filtered = filtered.filter(e => {
+      filtered = filtered.filter((e) => {
         if (!e.department) return false;
         return e.department.includes(query.department);
       });
     }
-    if (query.age.length === 2 && query.age[0] <= query.age[1] && query.age[1] - query.age[0] < 120) {
-      filtered = filtered.filter(e => {
+    if (query.age.length === 2
+      && query.age[0] <= query.age[1]
+      && query.age[1] - query.age[0] < 120) {
+      filtered = filtered.filter((e) => {
         if (!e.age) return false;
         return (e.age >= query.age[0] && e.age <= query.age[1]);
       });
     }
     if (query.area.length > 0) {
-      filtered = filtered.filter(e => {
+      filtered = filtered.filter((e) => {
         if (!e.area) return false;
         return e.area.includes(query.area);
       });
@@ -143,22 +146,33 @@ class EmployeeTable extends React.Component {
     this.setState({ employees: filtered, page: 0 });
   }
 
-  handleDialogClose() {
-    this.setState({ saveDialogVisible: false });
-  }
-
-  saveToVCF() {
-    this.handleDialogClose();
-    const vCardsStr = generateVCards(this.state.employees);
-    downloadFile('employees.vcf', vCardsStr);
-  }
-
-  componentWillUnmount() {
-    Emitter.removeListener(this.eventEmitter);
+  async loadEmployees() {
+    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/data.json.enc')
+      .then((response) => response.text())
+      .then((ct) => {
+        const deciphered = decryptData(ct, config.updateData.encryptKey);
+        return JSON.parse(deciphered);
+      })
+      .then((obj) => {
+        const { areaCodes } = this.state;
+        const members = obj.data.map((m) => ({
+          ...m,
+          age: calcAgeFromIDNumber(m.idnumber),
+          area: getAddressFromIDNumber(m.idnumber, areaCodes),
+        }));
+        this.setState({ allEmployees: members, employees: members });
+        Emitter.emit('updateTime', obj.updateTime);
+      });
   }
 
   render() {
-    const classes = this.props.classes;
+    const { classes } = this.props;
+    const {
+      employees,
+      page,
+      rowsPerPage,
+      saveDialogVisible,
+    } = this.state;
 
     return (
       <TableContainer component={Paper} elevation={2}>
@@ -175,37 +189,39 @@ class EmployeeTable extends React.Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(this.state.employees.slice(
-              this.state.page * this.state.rowsPerPage,
-              (this.state.page + 1) * this.state.rowsPerPage
-            )).map((employee) => (
-              <TableRow key={employee.memid}>
-                <TableCell component="th" scope="row" align="center">{
-                  employee.name.length === 2
-                    ? employee.name[0] + '\u2003' + employee.name[1]
-                    : employee.name
-                }</TableCell>
-                <TableCell align="center">{(employee.sex === "0") ? "女" : "男"}</TableCell>
-                <TableCell align="center">{employee.age}</TableCell>
-                <TableCell align="center">{employee.phone}</TableCell>
-                <TableCell align="center">{employee.idnumber}</TableCell>
-                <TableCell align="center">{employee.area}</TableCell>
-                <TableCell align="center">{employee.department}</TableCell>
-              </TableRow>
-            ))}
+            {
+              (employees.slice(page * rowsPerPage, (page + 1) * rowsPerPage))
+                .map((employee) => (
+                  <TableRow key={employee.memid}>
+                    <TableCell component="th" scope="row" align="center">
+                      {
+                        employee.name.length === 2
+                          ? `${employee.name[0]}\u2003${employee.name[1]}`
+                          : employee.name
+                      }
+                    </TableCell>
+                    <TableCell align="center">{(employee.sex === '0') ? '女' : '男'}</TableCell>
+                    <TableCell align="center">{employee.age}</TableCell>
+                    <TableCell align="center">{employee.phone}</TableCell>
+                    <TableCell align="center">{employee.idnumber}</TableCell>
+                    <TableCell align="center">{employee.area}</TableCell>
+                    <TableCell align="center">{employee.department}</TableCell>
+                  </TableRow>
+                ))
+            }
           </TableBody>
           <TableFooter>
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[10, 20, 50]}
-                count={this.state.employees.length}
-                rowsPerPage={this.state.rowsPerPage}
-                page={this.state.page}
-                labelRowsPerPage={'每页行数:'}
+                count={employees.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                labelRowsPerPage="每页行数:"
                 labelDisplayedRows={({ from, to, count }) => `第 ${from}-${to}，共 ${count}`}
                 SelectProps={{
                   native: false,
-                  style: { minWidth: 60 }
+                  style: { minWidth: 60 },
                 }}
                 onChangePage={this.handleChangePage}
                 onChangeRowsPerPage={this.handleChangeRowsPerPage}
@@ -215,13 +231,15 @@ class EmployeeTable extends React.Component {
           </TableFooter>
         </Table>
         <Dialog
-          open={this.state.saveDialogVisible}
+          open={saveDialogVisible}
           onClose={this.handleDialogClose}
         >
-          <DialogTitle>{"保存为 vCard 文件？"}</DialogTitle>
+          <DialogTitle>保存为 vCard 文件？</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              将下载一个包含 {this.state.employees.length} 个联系人的 vCard 文件，可导入至通讯录软件。
+              将下载一个包含&nbsp;
+              {employees.length}
+              &nbsp;个联系人的 vCard 文件，可导入至通讯录软件。
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -234,10 +252,13 @@ class EmployeeTable extends React.Component {
           </DialogActions>
         </Dialog>
       </TableContainer>
-
     );
   }
 }
+
+EmployeeTable.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
 
 const EmployeeTableHook = () => {
   const classes = useStyles();
