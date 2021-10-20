@@ -66,7 +66,7 @@ class Footer extends React.Component {
         {config.footerInfo.copyright}
         &nbsp;|&nbsp;
         <a
-          href="http://www.beian.miit.gov.cn/"
+          href="https://beian.miit.gov.cn/"
           target="_blank;"
           className={classes.footerLink}
         >
