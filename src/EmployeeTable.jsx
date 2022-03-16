@@ -17,6 +17,7 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import config from './config.json';
 import Emitter from './event';
@@ -46,6 +47,8 @@ class EmployeeTable extends React.Component {
       page: 0,
       rowsPerPage: 10,
       saveDialogVisible: false,
+      orderedBy: 'name',
+      order: 'asc',
     };
   }
 
@@ -70,6 +73,20 @@ class EmployeeTable extends React.Component {
 
   handleChangePage = (_event, newPage) => {
     this.setState({ page: newPage });
+  }
+
+  handleRequestSort(column) {
+    const { orderedBy, order } = this.state;
+    if (orderedBy === column) {
+      this.setState({
+        order: order === 'asc' ? 'desc' : 'asc',
+      }, this.sortEmployees);
+    } else {
+      this.setState({
+        orderedBy: column,
+        order: 'asc',
+      }, this.sortEmployees);
+    }
   }
 
   saveToVCF = () => {
@@ -129,6 +146,21 @@ class EmployeeTable extends React.Component {
     this.setState({ employees: filtered, page: 0 });
   }
 
+  sortEmployees() {
+    const { employees, orderedBy, order } = this.state;
+    const sortedEmployees = employees.sort((a, b) => {
+      const x = a[orderedBy];
+      const y = b[orderedBy];
+      if (typeof x === 'string') {
+        return order === 'asc' ? x.localeCompare(y) : y.localeCompare(x);
+      }
+      if (x === null) return 1;
+      if (y === null) return -1;
+      return order === 'asc' ? x - y : y - x;
+    });
+    this.setState({ employees: sortedEmployees });
+  }
+
   loadData() {
     fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/areaCodes.json')
       .then((response) => response.json())
@@ -151,7 +183,8 @@ class EmployeeTable extends React.Component {
         const { areaCodes } = this.state;
         const members = obj.data.map((m) => ({
           ...m,
-          age: calcAgeFromIDNumber(m.idnumber),
+          age: calcAgeFromIDNumber(m.idnumber).age,
+          ageDisp: calcAgeFromIDNumber(m.idnumber).ageDisp,
           area: getAddressFromIDNumber(m.idnumber, areaCodes),
         }));
         this.setState({ allEmployees: members, employees: members });
@@ -166,6 +199,8 @@ class EmployeeTable extends React.Component {
       page,
       rowsPerPage,
       saveDialogVisible,
+      orderedBy,
+      order,
     } = this.state;
 
     return (
@@ -173,9 +208,23 @@ class EmployeeTable extends React.Component {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="center"><b>姓名</b></TableCell>
+              <TableCell align="center">
+                <b>姓名</b>
+                <TableSortLabel
+                  active={orderedBy === 'name'}
+                  direction={orderedBy === 'name' ? order : 'asc'}
+                  onClick={() => { this.handleRequestSort('name'); }}
+                />
+              </TableCell>
               <TableCell align="center"><b>性别</b></TableCell>
-              <TableCell align="center"><b>年龄</b></TableCell>
+              <TableCell align="center">
+                <b>年龄</b>
+                <TableSortLabel
+                  active={orderedBy === 'age'}
+                  direction={orderedBy === 'age' ? order : 'asc'}
+                  onClick={() => { this.handleRequestSort('age'); }}
+                />
+              </TableCell>
               <TableCell align="center"><b>手机号</b></TableCell>
               <TableCell align="center"><b>身份证号</b></TableCell>
               <TableCell align="center"><b>籍贯</b></TableCell>
@@ -195,7 +244,7 @@ class EmployeeTable extends React.Component {
                       }
                     </TableCell>
                     <TableCell align="center">{(employee.sex === '0') ? '女' : '男'}</TableCell>
-                    <TableCell align="center">{employee.age}</TableCell>
+                    <TableCell align="center">{employee.ageDisp}</TableCell>
                     <TableCell align="center">{employee.phone}</TableCell>
                     <TableCell align="center">{employee.idnumber}</TableCell>
                     <TableCell align="center">{employee.area}</TableCell>

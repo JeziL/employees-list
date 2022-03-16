@@ -12,11 +12,19 @@ const getBirthdayFromIDNumber = (idnumber) => {
 };
 
 export const calcAgeFromIDNumber = (idnumber) => {
-  if (!idnumber) return null;
+  if (!idnumber) {
+    return {
+      ageDisp: null,
+      age: null,
+    };
+  }
   const birthday = getBirthdayFromIDNumber(idnumber);
   const ageDifMs = Date.now() - birthday.getTime();
   const ageDate = new Date(ageDifMs);
-  return Math.abs(ageDate.getUTCFullYear() - 1970);
+  return {
+    ageDisp: Math.abs(ageDate.getUTCFullYear() - 1970),
+    age: ageDifMs,
+  };
 };
 
 export const getAddressFromIDNumber = (idnumber, areaCodes) => {
