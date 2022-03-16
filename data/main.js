@@ -65,16 +65,27 @@ const parseAndSaveEmployees = (resp) => {
   });
 
   fs.writeFileSync('data.json.enc', encrypt(jsonStr, resp.key));
+  console.log(`${members.length} members saved.`);
 };
 
-const config = JSON.parse(fs.readFileSync('../src/config.json'));
+const config = JSON.parse(process.env.CI ? process.env.PROJ_CONFIG : fs.readFileSync('../src/config.json'));
 
 axios({
   method: 'post',
-  url: config.updateData.url,
+  url: config.updateData.url.login,
   headers: config.updateData.headers,
-  data: JSON.stringify(config.updateData.body),
+  data: JSON.stringify(config.updateData.body.login),
 })
+  .then((resp) => {
+    const header = config.updateData.headers;
+    header.access_token = resp.data.data.token;
+    return axios({
+      method: 'post',
+      url: config.updateData.url.data,
+      headers: header,
+      data: JSON.stringify(config.updateData.body.data),
+    });
+  })
   .then((resp) => ({
     data: resp.data,
     key: config.updateData.encryptKey,
