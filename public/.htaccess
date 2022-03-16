@@ -1,4 +1,4 @@
 AuthName "Enter Password"
 AuthType basic
-AuthUserFile /var/www/html/members.txt
+AuthUserFile /var/www/.htpasswd
 require valid-user
