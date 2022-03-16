@@ -1,0 +1,25 @@
+name: Update Data CI
+
+on:
+  schedule:
+    - cron: '0 19 * * 1'
+
+jobs:
+  update-data:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+        cache: 'npm'
+    - run: npm i axios
+    - env:
+        PROJ_CONFIG: ${{ secrets.PROJ_CONFIG }}
+      run: cd data && node main.js
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Update Data
