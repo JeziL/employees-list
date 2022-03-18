@@ -18,7 +18,10 @@ jobs:
         node-version: '16'
         cache: 'npm'
     - run: npm i
-    - run: npm run build
+    - env:
+        REACT_APP_PROJ_CONFIG: ${{ secrets.PROJ_CONFIG }}
+        REACT_APP_CI: true
+      run: npm run build
     - run: mv build happy-table
       shell: bash
     - name: Archive production build
