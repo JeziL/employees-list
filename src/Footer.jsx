@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Emitter from './event';
-import config from './config.json';
 
 const useStyles = makeStyles({
   footerDiv: {
@@ -28,6 +27,8 @@ class Footer extends React.Component {
     this.state = {
       updateTime: -1,
     };
+
+    this.config = JSON.parse(process.env.REACT_APP_PROJ_CONFIG);
   }
 
   componentDidMount() {
@@ -63,14 +64,14 @@ class Footer extends React.Component {
         Copyright ©&nbsp;
         {durationString}
         &nbsp;
-        {config.footerInfo.copyright}
+        {this.config.footerInfo.copyright}
         &nbsp;|&nbsp;
         <a
           href="https://beian.miit.gov.cn/"
           target="_blank;"
           className={classes.footerLink}
         >
-          {config.footerInfo.icp}
+          {this.config.footerInfo.icp}
         </a>
       </div>
     );
