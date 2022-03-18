@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /* eslint-disable react/forbid-prop-types */
 
 import Button from '@material-ui/core/Button';
@@ -19,7 +20,6 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { makeStyles } from '@material-ui/core/styles';
-import config from './config.json';
 import Emitter from './event';
 import TablePaginationActions from './TablePaginationActions';
 import {
@@ -50,6 +50,12 @@ class EmployeeTable extends React.Component {
       orderedBy: 'name',
       order: 'asc',
     };
+
+    if (process.env.CI) {
+      this.config = JSON.parse(process.env.PROJ_CONFIG);
+    } else {
+      this.config = require('./config.json');
+    }
   }
 
   componentDidMount() {
@@ -176,7 +182,7 @@ class EmployeeTable extends React.Component {
     fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/data.json.enc')
       .then((response) => response.text())
       .then((ct) => {
-        const deciphered = decryptData(ct, config.updateData.encryptKey);
+        const deciphered = decryptData(ct, this.config.updateData.encryptKey);
         return JSON.parse(deciphered);
       })
       .then((obj) => {
