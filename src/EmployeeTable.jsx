@@ -51,11 +51,11 @@ class EmployeeTable extends React.Component {
       order: 'asc',
     };
 
-    if (process.env.REACT_APP_CI) {
-      this.config = JSON.parse(process.env.REACT_APP_PROJ_CONFIG);
-    } else {
-      this.config = require('./config.json');
-    }
+    // if (process.env.REACT_APP_CI) {
+    this.config = JSON.parse(process.env.REACT_APP_PROJ_CONFIG);
+    // } else {
+    //   this.config = require('./config.json');
+    // }
   }
 
   componentDidMount() {
