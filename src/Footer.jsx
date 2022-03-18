@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /* eslint-disable react/forbid-prop-types */
 
 import PropTypes from 'prop-types';
@@ -28,7 +29,11 @@ class Footer extends React.Component {
       updateTime: -1,
     };
 
-    this.config = JSON.parse(process.env.REACT_APP_PROJ_CONFIG);
+    if (process.env.REACT_APP_CI === 'github_ci') {
+      this.config = JSON.parse(process.env.REACT_APP_PROJ_CONFIG);
+    } else {
+      this.config = require('./config.json');
+    }
   }
 
   componentDidMount() {
