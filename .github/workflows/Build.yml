@@ -22,6 +22,7 @@ jobs:
         REACT_APP_PROJ_CONFIG: ${{ secrets.PROJ_CONFIG }}
         REACT_APP_TITLE: ${{ secrets.TITLE }}
         REACT_APP_CI: github_ci
+        GENERATE_SOURCEMAP: false
       run: npm run build
     - run: mv build happy-table
       shell: bash
