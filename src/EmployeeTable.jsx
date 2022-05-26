@@ -168,7 +168,7 @@ class EmployeeTable extends React.Component {
   }
 
   loadData() {
-    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/areaCodes.json')
+    fetch(this.config.dataSource.areaCode)
       .then((response) => response.json())
       .then((obj) => {
         this.setState({ areaCodes: obj });
@@ -179,7 +179,7 @@ class EmployeeTable extends React.Component {
   }
 
   async loadEmployees() {
-    fetch('https://cdn.jsdelivr.net/gh/JeziL/employees-list/data/data.json.enc')
+    fetch(this.config.dataSource.list)
       .then((response) => response.text())
       .then((ct) => {
         const deciphered = decryptData(ct, this.config.updateData.encryptKey);
