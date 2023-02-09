@@ -138,8 +138,8 @@ class EmployeeTable extends React.Component {
       && query.age[0] <= query.age[1]
       && query.age[1] - query.age[0] < 120) {
       filtered = filtered.filter((e) => {
-        if (!e.age) return false;
-        return (e.age >= query.age[0] && e.age <= query.age[1]);
+        if (!e.ageDisp) return false;
+        return (e.ageDisp >= query.age[0] && e.ageDisp <= query.age[1]);
       });
     }
     if (query.area.length > 0) {
