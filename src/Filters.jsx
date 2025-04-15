@@ -40,9 +40,20 @@ class Filters extends React.Component {
       phone: '',
       idno: '',
       department: '',
+      deps: [],
       age: [0, 120],
       area: '',
     };
+  }
+
+  componentDidMount() {
+    this.eventEmitter = Emitter.addListener('departmentList', (deps) => {
+      this.setState({ deps });
+    });
+  }
+
+  componentWillUnmount() {
+    Emitter.removeListener(this.eventEmitter);
   }
 
   handleKeyPress = (e) => {
@@ -75,6 +86,7 @@ class Filters extends React.Component {
       phone,
       idno,
       department,
+      deps,
       age,
       area,
     } = this.state;
@@ -124,12 +136,18 @@ class Filters extends React.Component {
         </FormControl>
 
         <FormControl className={classes.formControl}>
-          <TextField
-            label="部门"
+          <InputLabel id="filter-dep-label">部门</InputLabel>
+          <Select
+            labelId="filter-dep-label"
+            id="filter-dep"
             value={department}
             onChange={(e) => { this.setState({ department: e.target.value }); }}
-            onKeyPress={this.handleKeyPress}
-          />
+          >
+            <MenuItem value="">&nbsp;</MenuItem>
+            {
+              deps.map((dep) => (<MenuItem value={dep}>{dep}</MenuItem>))
+            }
+          </Select>
         </FormControl>
 
         <FormControl className={classes.formControl} style={{ minWidth: '20%' }}>
