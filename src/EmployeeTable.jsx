@@ -194,7 +194,7 @@ class EmployeeTable extends React.Component {
           area: getAddressFromIDNumber(m.idnumber, areaCodes),
         }));
         this.setState({ allEmployees: members, employees: members });
-        Emitter.emit('departmentList', [...new Set(members.map((m) => m.department))]);
+        Emitter.emit('departmentList', [...new Set(members.map((m) => m.department))].sort((a, b) => a.localeCompare(b)));
         Emitter.emit('updateTime', obj.updateTime);
       });
   }
