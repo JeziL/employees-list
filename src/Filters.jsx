@@ -1,10 +1,12 @@
 /* eslint-disable react/forbid-prop-types */
 
 import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
 import Clear from '@material-ui/icons/Clear';
 import CloudDownload from '@material-ui/icons/CloudDownload';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -39,7 +41,7 @@ class Filters extends React.Component {
       sex: '',
       phone: '',
       idno: '',
-      department: '',
+      department: [],
       deps: [],
       age: [0, 120],
       area: '',
@@ -72,7 +74,7 @@ class Filters extends React.Component {
       sex: '',
       phone: '',
       idno: '',
-      department: '',
+      department: [],
       age: [0, 120],
       area: '',
     });
@@ -135,17 +137,24 @@ class Filters extends React.Component {
           />
         </FormControl>
 
-        <FormControl className={classes.formControl}>
+        <FormControl className={classes.formControl} style={{ maxWidth: '50%' }}>
           <InputLabel id="filter-dep-label">部门</InputLabel>
           <Select
             labelId="filter-dep-label"
             id="filter-dep"
+            multiple
             value={department}
+            renderValue={(selected) => selected.join(', ')}
             onChange={(e) => { this.setState({ department: e.target.value }); }}
           >
             <MenuItem value="">&nbsp;</MenuItem>
             {
-              deps.map((dep) => (<MenuItem value={dep}>{dep}</MenuItem>))
+              deps.map((dep) => (
+                <MenuItem key={dep} value={dep}>
+                  <Checkbox checked={department.includes(dep)} />
+                  <ListItemText primary={dep} />
+                </MenuItem>
+              ))
             }
           </Select>
         </FormControl>

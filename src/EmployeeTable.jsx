@@ -131,7 +131,7 @@ class EmployeeTable extends React.Component {
     if (query.department.length > 0) {
       filtered = filtered.filter((e) => {
         if (!e.department) return false;
-        return e.department.includes(query.department);
+        return query.department.includes(e.department);
       });
     }
     if (query.age.length === 2
