@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import Clear from '@material-ui/icons/Clear';
 import CloudDownload from '@material-ui/icons/CloudDownload';
+import EqualizerIcon from '@material-ui/icons/Equalizer';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -196,6 +197,11 @@ class Filters extends React.Component {
         <Button variant="outlined" color="primary" className={classes.filterBtn} onClick={() => { Emitter.emit('save'); }}>
           <CloudDownload />
           &ensp;保存
+        </Button>
+
+        <Button variant="outlined" color="primary" className={classes.filterBtn} onClick={() => { Emitter.emit('switch-stat'); }}>
+          <EqualizerIcon />
+          &ensp;切换至统计视图
         </Button>
 
       </div>

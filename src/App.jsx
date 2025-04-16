@@ -1,6 +1,6 @@
 /* eslint-disable global-require */
 import Container from '@material-ui/core/Container';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import EmployeeTable from './EmployeeTable';
 import Filters from './Filters';
 import Footer from './Footer';
@@ -10,8 +10,12 @@ import {
   getAddressFromIDNumber,
   decryptData,
 } from './utils';
+import Statistics from './Statistics';
 
 function App() {
+  let eventListener;
+  const [view, setView] = useState('table');
+
   const config = process.env.REACT_APP_CI === 'github_ci' ? JSON.parse(process.env.REACT_APP_PROJ_CONFIG) : require('./config.json');
 
   const loadEmployees = async (areaCodes) => {
@@ -44,14 +48,27 @@ function App() {
 
   useEffect(() => {
     loadData();
+    eventListener = Emitter.addListener('switch-stat', () => { setView('stat'); });
+    eventListener.addListener('switch-table', () => { setView('table'); });
+    return () => {
+      if (typeof eventListener === 'function') {
+        Emitter.removeListener(eventListener);
+      }
+    };
   }, []);
 
   return (
     <Container fixed>
-      <Filters />
-      <br />
-      <EmployeeTable />
-      <br />
+      {view === 'table' ? (
+        <div>
+          <Filters />
+          <br />
+          <EmployeeTable />
+          <br />
+        </div>
+      ) : (
+        <Statistics />
+      )}
       <Footer />
       <br />
     </Container>
