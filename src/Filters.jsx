@@ -105,7 +105,7 @@ class Filters extends React.Component {
           />
         </FormControl>
 
-        <FormControl className={classes.formControl}>
+        <FormControl className={classes.formControl} style={{ minWidth: '20%' }}>
           <InputLabel id="filter-sex-label">性别</InputLabel>
           <Select
             labelId="filter-sex-label"
@@ -137,7 +137,7 @@ class Filters extends React.Component {
           />
         </FormControl>
 
-        <FormControl className={classes.formControl} style={{ maxWidth: '50%' }}>
+        <FormControl className={classes.formControl} style={{ minWidth: '20%', maxWidth: '50%' }}>
           <InputLabel id="filter-dep-label">部门</InputLabel>
           <Select
             labelId="filter-dep-label"
