@@ -65,7 +65,9 @@ class EmployeeTable extends React.Component {
   }
 
   componentWillUnmount() {
-    Emitter.removeListener(this.eventEmitter);
+    if (typeof this.eventEmitter === 'function') {
+      Emitter.removeListener(this.eventEmitter);
+    }
   }
 
   handleDialogClose = () => {
