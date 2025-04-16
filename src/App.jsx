@@ -59,16 +59,15 @@ function App() {
 
   return (
     <Container fixed>
-      {view === 'table' ? (
-        <div>
-          <Filters />
-          <br />
-          <EmployeeTable />
-          <br />
-        </div>
-      ) : (
+      <div id="table-view" hidden={view === 'stat'}>
+        <Filters />
+        <br />
+        <EmployeeTable />
+        <br />
+      </div>
+      <div id="stat-view" hidden={view === 'table'}>
         <Statistics />
-      )}
+      </div>
       <Footer />
       <br />
     </Container>
