@@ -11,9 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4.2.2
+    - uses: actions/checkout@v4
     - name: Setup Node.js environment
-      uses: actions/setup-node@v3.9.0
+      uses: actions/setup-node@v4
       with:
         node-version: '16.x'
         cache: 'npm'
@@ -27,7 +27,7 @@ jobs:
     - run: mv build happy-table
       shell: bash
     - name: Archive production build
-      uses: actions/upload-artifact@v4.6.2
+      uses: actions/upload-artifact@v4
       with:
         name: happy-table
         path: |
