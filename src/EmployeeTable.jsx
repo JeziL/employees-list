@@ -23,9 +23,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Emitter from './event';
 import TablePaginationActions from './TablePaginationActions';
 import {
-  calcAgeFromIDNumber,
-  getAddressFromIDNumber,
-  decryptData,
   generateVCards,
   downloadFile,
 } from './utils';
@@ -43,7 +40,6 @@ class EmployeeTable extends React.Component {
     this.state = {
       employees: [],
       allEmployees: [],
-      areaCodes: {},
       page: 0,
       rowsPerPage: 10,
       saveDialogVisible: false,
@@ -59,9 +55,14 @@ class EmployeeTable extends React.Component {
   }
 
   componentDidMount() {
-    this.loadData();
     this.eventEmitter = Emitter.addListener('search', this.filterEmployee);
     this.eventEmitter.addListener('save', () => { this.setState({ saveDialogVisible: true }); });
+    this.eventEmitter.addListener('employee-data', (employees) => {
+      this.setState({
+        employees,
+        allEmployees: employees,
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -167,38 +168,6 @@ class EmployeeTable extends React.Component {
       return order === 'asc' ? x - y : y - x;
     });
     this.setState({ employees: sortedEmployees });
-  }
-
-  loadData() {
-    fetch(this.config.dataSource.areaCode)
-      .then((response) => response.json())
-      .then((obj) => {
-        this.setState({ areaCodes: obj });
-      })
-      .then(() => {
-        this.loadEmployees();
-      });
-  }
-
-  async loadEmployees() {
-    fetch(this.config.dataSource.list)
-      .then((response) => response.text())
-      .then((ct) => {
-        const deciphered = decryptData(ct, this.config.updateData.encryptKey);
-        return JSON.parse(deciphered);
-      })
-      .then((obj) => {
-        const { areaCodes } = this.state;
-        const members = obj.data.map((m) => ({
-          ...m,
-          age: calcAgeFromIDNumber(m.idnumber).age,
-          ageDisp: calcAgeFromIDNumber(m.idnumber).ageDisp,
-          area: getAddressFromIDNumber(m.idnumber, areaCodes),
-        }));
-        this.setState({ allEmployees: members, employees: members });
-        Emitter.emit('departmentList', [...new Set(members.map((m) => m.department))].sort((a, b) => a.localeCompare(b)));
-        Emitter.emit('updateTime', obj.updateTime);
-      });
   }
 
   render() {
