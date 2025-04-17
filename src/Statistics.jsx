@@ -234,7 +234,7 @@ const Statistics = () => {
           },
           visualMap: {
             left: 'right',
-            min: 0,
+            min: 1,
             max: 250,
             inRange: {
               color: [
