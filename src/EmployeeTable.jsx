@@ -46,12 +46,6 @@ class EmployeeTable extends React.Component {
       orderedBy: 'name',
       order: 'asc',
     };
-
-    if (process.env.REACT_APP_CI === 'github_ci') {
-      this.config = JSON.parse(process.env.REACT_APP_PROJ_CONFIG);
-    } else {
-      this.config = require('./config.json');
-    }
   }
 
   componentDidMount() {
