@@ -66,6 +66,7 @@ const Statistics = () => {
       <ReactECharts option={{
         tooltip: {
           trigger: 'item',
+          confine: true,
         },
         legend: {
           show: false,
@@ -111,6 +112,7 @@ const Statistics = () => {
       <ReactECharts option={{
         tooltip: {
           trigger: 'item',
+          confine: true,
         },
         legend: {
           show: false,
@@ -163,6 +165,7 @@ const Statistics = () => {
           axisPointer: {
             type: 'shadow',
           },
+          confine: true,
         },
       }}
       />
@@ -209,6 +212,7 @@ const Statistics = () => {
           },
         }],
         tooltip: {
+          confine: true,
           trigger: 'item',
           axisPointer: {
             type: 'shadow',
@@ -231,6 +235,7 @@ const Statistics = () => {
             trigger: 'item',
             showDelay: 0,
             transitionDuration: 0.2,
+            confine: true,
           },
           visualMap: {
             left: 'right',
@@ -289,6 +294,7 @@ const Statistics = () => {
         },
         tooltip: {
           trigger: 'item',
+          confine: true,
         },
         legend: {
           show: false,
